@@ -89,19 +89,19 @@ const StockSearch: React.FC<StockSearchProps> = ({ onStockSelect }) => {
           </Box>
           <Box textAlign="right">
             <Typography variant="h6" color="primary" fontWeight="bold">
-              {formatPrice(stock.currentPrice)}
+              {formatPrice(stock.current_price)}
             </Typography>
             <Box display="flex" alignItems="center" gap={0.5}>
-              {stock.changePercent >= 0 ? 
+              {stock.change_percent >= 0 ? 
                 <TrendingUp color="success" fontSize="small" /> : 
                 <TrendingDown color="error" fontSize="small" />
               }
               <Typography
-                color={stock.changePercent >= 0 ? 'success.main' : 'error.main'}
+                color={stock.change_percent >= 0 ? 'success.main' : 'error.main'}
                 fontWeight="medium"
                 variant="body2"
               >
-                {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                {stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%
               </Typography>
             </Box>
           </Box>
@@ -163,7 +163,7 @@ const StockSearch: React.FC<StockSearchProps> = ({ onStockSelect }) => {
           </Typography>
           <Grid container spacing={2}>
             {results.map((stock) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={stock.symbol}>
+              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={stock.symbol}>
                 <StockCard stock={stock} />
               </Grid>
             ))}
