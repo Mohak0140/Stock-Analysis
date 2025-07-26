@@ -120,10 +120,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
         </Box>
         
         <Typography variant="h6" color="primary" fontWeight="bold" mb={1}>
-          {formatPrice(stock.currentPrice)}
+          {formatPrice(stock.current_price)}
         </Typography>
         
-        {formatChange(stock.change, stock.changePercent)}
+        {formatChange(stock.change, stock.change_percent)}
         
         {stock.volume > 0 && (
           <Typography variant="caption" color="text.secondary" display="block" mt={1}>
@@ -156,15 +156,15 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
                 {stock.symbol}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {formatPrice(stock.currentPrice)}
+                {formatPrice(stock.current_price)}
               </Typography>
             </Box>
             <Typography 
               variant="body2" 
-              color={stock.changePercent >= 0 ? 'success.main' : 'error.main'}
+              color={stock.change_percent >= 0 ? 'success.main' : 'error.main'}
               fontWeight="medium"
             >
-              {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+              {stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%
             </Typography>
           </Box>
         ))}
@@ -184,7 +184,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
         
         <Grid container spacing={3} mb={3}>
           {[1, 2, 3, 4].map((i) => (
-            <Grid item xs={12} sm={6} md={3} key={i}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={i}>
               <Skeleton variant="rectangular" height={120} />
             </Grid>
           ))}
@@ -195,7 +195,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
         </Typography>
         <Grid container spacing={2}>
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={i}>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={i}>
               <Skeleton variant="rectangular" height={160} />
             </Grid>
           ))}
@@ -225,28 +225,28 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
       {/* Market Stats */}
       {marketStats && (
         <Grid container spacing={3} mb={4}>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <StatCard 
               title="Top Gainers" 
               stocks={marketStats.topGainers} 
               color="success"
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <StatCard 
               title="Top Losers" 
               stocks={marketStats.topLosers} 
               color="error"
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <StatCard 
               title="Most Active" 
               stocks={marketStats.mostActive} 
               color="primary"
             />
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
@@ -275,7 +275,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
       
       <Grid container spacing={2}>
         {trendingStocks.map((stock) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={stock.symbol}>
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={stock.symbol}>
             <StockCard 
               stock={stock} 
               onClick={() => onStockSelect(stock.symbol)}
