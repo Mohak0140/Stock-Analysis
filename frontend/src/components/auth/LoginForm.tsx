@@ -61,9 +61,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegister }) 
     setError(null);
 
     try {
+      console.log('Attempting login with:', { email: formData.email, passwordLength: formData.password.length });
       const result = await authAPI.login(formData.email, formData.password);
+      console.log('Login successful:', result);
       onSuccess(result.user);
     } catch (err: any) {
+      console.error('Login error:', err);
       const errorMessage = err.response?.data?.error || err.message || 'Login failed';
       setError(errorMessage);
     } finally {

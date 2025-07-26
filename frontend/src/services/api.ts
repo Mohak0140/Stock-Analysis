@@ -35,7 +35,19 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error('API Error:', error.response?.data || error.message);
+    console.error('API Error:', error);
+    
+    // Handle network errors
+    if (!error.response) {
+      console.error('Network error or server is down:', error.message);
+      throw new Error('Unable to connect to server. Please check your connection.');
+    }
+    
+    console.error('API Error Details:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
     
     // Handle authentication errors
     if (error.response?.status === 401) {

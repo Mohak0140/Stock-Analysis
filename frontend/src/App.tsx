@@ -225,10 +225,15 @@ const AppContent: React.FC = () => {
       <List>
         {menuItems.map((item) => (
           <ListItem 
-            button 
             key={item.text}
             onClick={() => handleViewChange(item.view)}
-            selected={state.currentView === item.view}
+            sx={{ 
+              cursor: 'pointer',
+              backgroundColor: state.currentView === item.view ? 'action.selected' : 'transparent',
+              '&:hover': {
+                backgroundColor: 'action.hover'
+              }
+            }}
           >
             <ListItemIcon>
               {item.icon}

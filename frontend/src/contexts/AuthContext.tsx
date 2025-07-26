@@ -75,8 +75,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const result = await authAPI.login(email, password);
+      console.log('Login result:', result);
       setUser(result.user);
     } catch (error) {
+      console.error('Login error in context:', error);
       throw error;
     } finally {
       setIsLoading(false);
