@@ -11,10 +11,17 @@ const api = axios.create({
   },
 });
 
-// Request interceptor for logging
+// Request interceptor for logging and auth
 api.interceptors.request.use(
   (config) => {
     console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`);
+    
+    // Add auth token if available
+    const token = localStorage.getItem('token');
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
     return config;
   },
   (error) => {
@@ -29,6 +36,19 @@ api.interceptors.response.use(
   },
   (error) => {
     console.error('API Error:', error.response?.data || error.message);
+    
+    // Handle authentication errors
+    if (error.response?.status === 401) {
+      // Token is invalid or expired
+      localStorage.removeItem('token');
+      delete api.defaults.headers.common['Authorization'];
+      
+      // If it's not a login/register request, redirect to login
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('login') && !currentPath.includes('register')) {
+        window.location.href = '/login';
+      }
+    }
     
     // Handle specific error cases
     if (error.response?.status === 503) {
@@ -140,33 +160,135 @@ export const stockAPI = {
   }
 };
 
+export const authAPI = {
+  // Register user
+  register: async (name: string, email: string, password: string): Promise<any> => {
+    try {
+      const response = await api.post('/auth/register', { name, email, password });
+      
+      // Store token in localStorage
+      if (response.data.data.token) {
+        localStorage.setItem('token', response.data.data.token);
+        // Update axios default headers
+        api.defaults.headers.common['Authorization'] = `Bearer ${response.data.data.token}`;
+      }
+      
+      return response.data.data;
+    } catch (error) {
+      console.error('Error registering user:', error);
+      throw error;
+    }
+  },
+
+  // Login user
+  login: async (email: string, password: string): Promise<any> => {
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      
+      // Store token in localStorage
+      if (response.data.data.token) {
+        localStorage.setItem('token', response.data.data.token);
+        // Update axios default headers
+        api.defaults.headers.common['Authorization'] = `Bearer ${response.data.data.token}`;
+      }
+      
+      return response.data.data;
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
+  },
+
+  // Get current user
+  getCurrentUser: async (): Promise<any> => {
+    try {
+      const response = await api.get('/auth/me');
+      return response.data.data.user;
+    } catch (error) {
+      console.error('Error fetching current user:', error);
+      throw error;
+    }
+  },
+
+  // Update profile
+  updateProfile: async (name?: string, email?: string): Promise<any> => {
+    try {
+      const response = await api.put('/auth/me', { name, email });
+      return response.data.data.user;
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      throw error;
+    }
+  },
+
+  // Change password
+  changePassword: async (currentPassword: string, newPassword: string): Promise<any> => {
+    try {
+      const response = await api.put('/auth/change-password', { currentPassword, newPassword });
+      return response.data;
+    } catch (error) {
+      console.error('Error changing password:', error);
+      throw error;
+    }
+  },
+
+  // Logout user
+  logout: async (): Promise<any> => {
+    try {
+      const response = await api.post('/auth/logout');
+      
+      // Remove token from localStorage
+      localStorage.removeItem('token');
+      // Remove from axios default headers
+      delete api.defaults.headers.common['Authorization'];
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error logging out:', error);
+      // Even if the API call fails, clear local storage
+      localStorage.removeItem('token');
+      delete api.defaults.headers.common['Authorization'];
+      throw error;
+    }
+  },
+
+  // Delete account
+  deleteAccount: async (password: string): Promise<any> => {
+    try {
+      const response = await api.delete('/auth/me', { data: { password } });
+      
+      // Remove token from localStorage
+      localStorage.removeItem('token');
+      // Remove from axios default headers
+      delete api.defaults.headers.common['Authorization'];
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      throw error;
+    }
+  },
+
+  // Check if user is authenticated
+  isAuthenticated: (): boolean => {
+    const token = localStorage.getItem('token');
+    return !!token;
+  },
+
+  // Initialize auth (set token in headers)
+  initializeAuth: (): void => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+  }
+};
+
 export const userAPI = {
-  // Get or create user
-  getOrCreateUser: async (email: string, name: string): Promise<any> => {
-    try {
-      const response = await api.post('/users', { email, name });
-      return response.data.data;
-    } catch (error) {
-      console.error('Error getting/creating user:', error);
-      throw error;
-    }
-  },
-
-  // Get user by email
-  getUser: async (email: string): Promise<any> => {
-    try {
-      const response = await api.get(`/users/${encodeURIComponent(email)}`);
-      return response.data.data;
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      throw error;
-    }
-  },
-
   // Get user's watchlist
-  getWatchlist: async (email: string, populate: boolean = true): Promise<any[]> => {
+  getWatchlist: async (populate: boolean = true): Promise<any[]> => {
     try {
-      const response = await api.get(`/users/${encodeURIComponent(email)}/watchlist?populate=${populate}`);
+      const response = await api.get(`/users/watchlist?populate=${populate}`);
       return response.data.data;
     } catch (error) {
       console.error('Error fetching watchlist:', error);
@@ -175,9 +297,9 @@ export const userAPI = {
   },
 
   // Add stock to watchlist
-  addToWatchlist: async (email: string, symbol: string, alertPrice?: number, notes?: string): Promise<any> => {
+  addToWatchlist: async (symbol: string, alertPrice?: number, notes?: string): Promise<any> => {
     try {
-      const response = await api.post(`/users/${encodeURIComponent(email)}/watchlist`, {
+      const response = await api.post(`/users/watchlist`, {
         symbol,
         alertPrice,
         notes
@@ -190,9 +312,9 @@ export const userAPI = {
   },
 
   // Remove stock from watchlist
-  removeFromWatchlist: async (email: string, symbol: string): Promise<any> => {
+  removeFromWatchlist: async (symbol: string): Promise<any> => {
     try {
-      const response = await api.delete(`/users/${encodeURIComponent(email)}/watchlist/${symbol.toUpperCase()}`);
+      const response = await api.delete(`/users/watchlist/${symbol.toUpperCase()}`);
       return response.data.data;
     } catch (error) {
       console.error('Error removing from watchlist:', error);
@@ -201,9 +323,9 @@ export const userAPI = {
   },
 
   // Update user preferences
-  updatePreferences: async (email: string, preferences: any): Promise<any> => {
+  updatePreferences: async (preferences: any): Promise<any> => {
     try {
-      const response = await api.put(`/users/${encodeURIComponent(email)}/preferences`, preferences);
+      const response = await api.put(`/users/preferences`, preferences);
       return response.data.data;
     } catch (error) {
       console.error('Error updating preferences:', error);

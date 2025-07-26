@@ -16,7 +16,11 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider
+  Divider,
+  Avatar,
+  Menu,
+  MenuItem,
+  CircularProgress
 } from '@mui/material';
 import {
   TrendingUp,
@@ -25,8 +29,13 @@ import {
   Analytics,
   Menu as MenuIcon,
   DarkMode,
-  LightMode
+  LightMode,
+  AccountCircle,
+  Logout,
+  Settings
 } from '@mui/icons-material';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import AuthPage from './components/auth/AuthPage';
 import Dashboard from './components/Dashboard';
 import StockSearch from './components/StockSearch';
 import StockDetail from './components/StockDetail';
@@ -39,14 +48,17 @@ interface AppState {
   selectedStock: string | null;
   currentView: 'dashboard' | 'search' | 'stock' | 'watchlist';
   drawerOpen: boolean;
+  userMenuAnchor: HTMLElement | null;
 }
 
-function App() {
+const AppContent: React.FC = () => {
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [state, setState] = useState<AppState>({
     darkMode: false,
     selectedStock: null,
     currentView: 'dashboard',
-    drawerOpen: false
+    drawerOpen: false,
+    userMenuAnchor: null
   });
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -121,6 +133,56 @@ function App() {
   const handleThemeToggle = () => {
     setState(prev => ({ ...prev, darkMode: !prev.darkMode }));
   };
+
+  const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setState(prev => ({ ...prev, userMenuAnchor: event.currentTarget }));
+  };
+
+  const handleUserMenuClose = () => {
+    setState(prev => ({ ...prev, userMenuAnchor: null }));
+  };
+
+  const handleLogout = async () => {
+    handleUserMenuClose();
+    await logout();
+  };
+
+  const handleAuthSuccess = (user: any) => {
+    // Authentication successful, user state will be updated by context
+    console.log('Authentication successful:', user);
+  };
+
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box 
+          display="flex" 
+          justifyContent="center" 
+          alignItems="center" 
+          minHeight="100vh"
+          sx={{ 
+            background: state.darkMode 
+              ? 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)'
+              : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+          }}
+        >
+          <CircularProgress size={60} sx={{ color: 'white' }} />
+        </Box>
+      </ThemeProvider>
+    );
+  }
+
+  // Show authentication page if user is not authenticated
+  if (!isAuthenticated) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <AuthPage onAuthSuccess={handleAuthSuccess} />
+      </ThemeProvider>
+    );
+  }
 
   const menuItems = [
     { text: 'Dashboard', icon: <TrendingUp />, view: 'dashboard' as const },
@@ -214,6 +276,42 @@ function App() {
               <IconButton color="inherit" onClick={handleThemeToggle}>
                 {state.darkMode ? <LightMode /> : <DarkMode />}
               </IconButton>
+              
+              {/* User Menu */}
+              <IconButton
+                color="inherit"
+                onClick={handleUserMenuOpen}
+                sx={{ ml: 1 }}
+              >
+                <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
+                  {user?.name?.charAt(0)?.toUpperCase() || <AccountCircle />}
+                </Avatar>
+              </IconButton>
+              <Menu
+                anchorEl={state.userMenuAnchor}
+                open={Boolean(state.userMenuAnchor)}
+                onClose={handleUserMenuClose}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              >
+                <MenuItem disabled>
+                  <Box>
+                    <Typography variant="subtitle2">{user?.name}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {user?.email}
+                    </Typography>
+                  </Box>
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleUserMenuClose}>
+                  <Settings sx={{ mr: 1 }} />
+                  Settings
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <Logout sx={{ mr: 1 }} />
+                  Logout
+                </MenuItem>
+              </Menu>
             </Box>
           </Toolbar>
         </AppBar>
@@ -269,6 +367,14 @@ function App() {
         </Box>
       </Box>
     </ThemeProvider>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

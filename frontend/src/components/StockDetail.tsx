@@ -10,18 +10,22 @@ import {
   Grid,
   Button
 } from '@mui/material';
-import { TrendingUp, TrendingDown, Bookmark } from '@mui/icons-material';
-import { stockAPI } from '../services/api';
+import { TrendingUp, TrendingDown, Bookmark, BookmarkAdded } from '@mui/icons-material';
+import { stockAPI, userAPI } from '../services/api';
 import { StockData } from '../types/stock';
+import { useAuth } from '../contexts/AuthContext';
 
 interface StockDetailProps {
   symbol: string;
 }
 
 const StockDetail: React.FC<StockDetailProps> = ({ symbol }) => {
+  const { user, refreshUser } = useAuth();
   const [stock, setStock] = useState<StockData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isInWatchlist, setIsInWatchlist] = useState(false);
+  const [addingToWatchlist, setAddingToWatchlist] = useState(false);
 
   useEffect(() => {
     const loadStock = async () => {
@@ -30,6 +34,12 @@ const StockDetail: React.FC<StockDetailProps> = ({ symbol }) => {
         setError(null);
         const stockData = await stockAPI.getStock(symbol);
         setStock(stockData);
+        
+        // Check if stock is in user's watchlist
+        if (user?.watchlist) {
+          const inWatchlist = user.watchlist.some(item => item.symbol === symbol.toUpperCase());
+          setIsInWatchlist(inWatchlist);
+        }
       } catch (err: any) {
         setError(err.message || 'Failed to load stock data');
       } finally {
@@ -38,13 +48,36 @@ const StockDetail: React.FC<StockDetailProps> = ({ symbol }) => {
     };
 
     loadStock();
-  }, [symbol]);
+  }, [symbol, user?.watchlist]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD'
     }).format(price);
+  };
+
+  const handleWatchlistToggle = async () => {
+    if (!stock) return;
+    
+    try {
+      setAddingToWatchlist(true);
+      
+      if (isInWatchlist) {
+        await userAPI.removeFromWatchlist(stock.symbol);
+        setIsInWatchlist(false);
+      } else {
+        await userAPI.addToWatchlist(stock.symbol);
+        setIsInWatchlist(true);
+      }
+      
+      // Refresh user data to update watchlist
+      await refreshUser();
+    } catch (err: any) {
+      setError(err.message || 'Failed to update watchlist');
+    } finally {
+      setAddingToWatchlist(false);
+    }
   };
 
   if (loading) {
@@ -83,14 +116,18 @@ const StockDetail: React.FC<StockDetailProps> = ({ symbol }) => {
           </Typography>
         </Box>
         <Button
-          variant="outlined"
-          startIcon={<Bookmark />}
-          onClick={() => {
-            // TODO: Implement add to watchlist
-            console.log('Add to watchlist:', stock.symbol);
-          }}
+          variant={isInWatchlist ? "contained" : "outlined"}
+          startIcon={isInWatchlist ? <BookmarkAdded /> : <Bookmark />}
+          onClick={handleWatchlistToggle}
+          disabled={addingToWatchlist}
+          color={isInWatchlist ? "success" : "primary"}
         >
-          Add to Watchlist
+          {addingToWatchlist 
+            ? 'Updating...' 
+            : isInWatchlist 
+              ? 'In Watchlist' 
+              : 'Add to Watchlist'
+          }
         </Button>
       </Box>
 
