@@ -138,14 +138,14 @@ const Watchlist: React.FC<WatchlistProps> = ({ onStockSelect }) => {
                 <TrendingDown color="error" fontSize="small" />
               }
               <Typography
-                color={item.stockData.changePercent >= 0 ? 'success.main' : 'error.main'}
+                color={typeof item.stockData.changePercent === 'number' && item.stockData.changePercent >= 0 ? 'success.main' : 'error.main'}
                 fontWeight="medium"
                 variant="body2"
               >
-                {item.stockData.changePercent >= 0 ? '+' : ''}
-                {item.stockData.change.toFixed(2)} 
-                ({item.stockData.changePercent >= 0 ? '+' : ''}
-                {item.stockData.changePercent.toFixed(2)}%)
+                {typeof item.stockData.changePercent === 'number' && item.stockData.changePercent >= 0 ? '+' : ''}
+                {typeof item.stockData.change === 'number' ? item.stockData.change.toFixed(2) : '--'} 
+                ({typeof item.stockData.changePercent === 'number' && item.stockData.changePercent >= 0 ? '+' : ''}
+                {typeof item.stockData.changePercent === 'number' ? item.stockData.changePercent.toFixed(2) : '--'}%)
               </Typography>
             </Box>
 
