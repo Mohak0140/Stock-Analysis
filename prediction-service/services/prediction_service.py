@@ -6,15 +6,18 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LinearRegression
 from statsmodels.tsa.ar_model import AutoReg
 from statsmodels.tsa.arima.model import ARIMA
-import warnings
-warnings.filterwarnings('ignore')
+import asyncio
+import logging
+from models.prediction_models import PredictionResponse, PredictionData, ModelInfo, AccuracyMetrics
+
+logger = logging.getLogger(__name__)
 
 class PredictionService:
     def __init__(self):
         self.scaler = MinMaxScaler()
     
-    def predict_prices(self, symbol, days=30):
-        """Predict future stock prices using auto-regression"""
+    async def predict_prices(self, symbol: str, days: int = 30) -> PredictionResponse:
+        """Predict future stock prices using auto-regression ensemble"""
         try:
             # Get historical data (2 years for better model training)
             ticker = yf.Ticker(symbol)
@@ -26,14 +29,14 @@ class PredictionService:
             # Prepare data
             prices = hist['Close'].values
             
-            # Method 1: AutoRegression with statsmodels
-            ar_predictions = self._predict_with_autoregression(prices, days)
+            # Run prediction methods asynchronously
+            tasks = [
+                self._predict_with_autoregression(prices, days),
+                self._predict_with_linear_regression(prices, days),
+                self._predict_with_arima(prices, days)
+            ]
             
-            # Method 2: Linear regression on moving averages
-            lr_predictions = self._predict_with_linear_regression(prices, days)
-            
-            # Method 3: Simple ARIMA model
-            arima_predictions = self._predict_with_arima(prices, days)
+            ar_predictions, lr_predictions, arima_predictions = await asyncio.gather(*tasks)
             
             # Ensemble prediction (average of methods)
             ensemble_predictions = []
@@ -50,56 +53,62 @@ class PredictionService:
                 prices, ensemble_predictions
             )
             
-            # Generate future dates
-            last_date = hist.index[-1]
-            future_dates = []
-            for i in range(1, days + 1):
-                future_date = last_date + timedelta(days=i)
-                # Skip weekends for stock market
-                while future_date.weekday() > 4:  # 5=Saturday, 6=Sunday
-                    future_date += timedelta(days=1)
-                future_dates.append(future_date.strftime('%Y-%m-%d'))
+            # Generate future dates (business days only)
+            future_dates = self._generate_business_dates(hist.index[-1], days)
             
             # Prepare response
             current_price = float(prices[-1])
             predictions_data = []
             
-            for i, date in enumerate(future_dates):
+            for i, date in enumerate(future_dates[:days]):
                 if i < len(ensemble_predictions):
                     pred_price = round(float(ensemble_predictions[i]), 2)
                     lower_bound = round(float(confidence_intervals[i][0]), 2)
                     upper_bound = round(float(confidence_intervals[i][1]), 2)
                     
-                    predictions_data.append({
-                        "date": date,
-                        "predicted_price": pred_price,
-                        "lower_bound": lower_bound,
-                        "upper_bound": upper_bound,
-                        "change_from_current": round(pred_price - current_price, 2),
-                        "change_percent": round(((pred_price - current_price) / current_price) * 100, 2)
-                    })
+                    predictions_data.append(PredictionData(
+                        date=date.strftime('%Y-%m-%d'),
+                        predicted_price=pred_price,
+                        lower_bound=lower_bound,
+                        upper_bound=upper_bound,
+                        change_from_current=round(pred_price - current_price, 2),
+                        change_percent=round(((pred_price - current_price) / current_price) * 100, 2)
+                    ))
             
             # Calculate model accuracy metrics
             accuracy_metrics = self._calculate_accuracy_metrics(prices)
             
-            return {
-                "symbol": symbol,
-                "current_price": round(current_price, 2),
-                "prediction_period": f"{days} days",
-                "predictions": predictions_data,
-                "model_info": {
-                    "methods_used": ["AutoRegression", "Linear Regression", "ARIMA"],
-                    "ensemble": "Average of all methods",
-                    "accuracy_metrics": accuracy_metrics
-                },
-                "timestamp": datetime.now().isoformat()
-            }
+            model_info = ModelInfo(
+                methods_used=["AutoRegression", "Linear Regression", "ARIMA"],
+                ensemble="Weighted average of all methods",
+                accuracy_metrics=accuracy_metrics
+            )
+            
+            return PredictionResponse(
+                symbol=symbol,
+                current_price=round(current_price, 2),
+                prediction_period=f"{days} business days",
+                predictions=predictions_data,
+                model_info=model_info,
+                timestamp=datetime.now()
+            )
             
         except Exception as e:
-            raise Exception(f"Error predicting prices for {symbol}: {str(e)}")
+            logger.error(f"Error predicting prices for {symbol}: {str(e)}")
+            raise Exception(f"Prediction failed for {symbol}: {str(e)}")
     
-    def _predict_with_autoregression(self, prices, days):
+    async def _predict_with_autoregression(self, prices, days):
         """Predict using AutoRegression model"""
+        try:
+            # Run in thread pool to avoid blocking
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(None, self._ar_predict, prices, days)
+        except Exception as e:
+            logger.warning(f"AutoRegression failed: {e}")
+            return self._simple_trend_prediction(prices, days)
+    
+    def _ar_predict(self, prices, days):
+        """Synchronous AutoRegression prediction"""
         try:
             # Determine optimal lag
             max_lag = min(20, len(prices) // 5)
@@ -110,11 +119,19 @@ class PredictionService:
             forecast = fitted_model.forecast(steps=days)
             return forecast.tolist()
         except:
-            # Fallback to simple linear trend
             return self._simple_trend_prediction(prices, days)
     
-    def _predict_with_linear_regression(self, prices, days):
+    async def _predict_with_linear_regression(self, prices, days):
         """Predict using Linear Regression on features"""
+        try:
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(None, self._lr_predict, prices, days)
+        except Exception as e:
+            logger.warning(f"Linear Regression failed: {e}")
+            return self._simple_trend_prediction(prices, days)
+    
+    def _lr_predict(self, prices, days):
+        """Synchronous Linear Regression prediction"""
         try:
             # Create features: moving averages, trends
             df = pd.DataFrame({'price': prices})
@@ -160,8 +177,17 @@ class PredictionService:
         except:
             return self._simple_trend_prediction(prices, days)
     
-    def _predict_with_arima(self, prices, days):
+    async def _predict_with_arima(self, prices, days):
         """Predict using ARIMA model"""
+        try:
+            loop = asyncio.get_event_loop()
+            return await loop.run_in_executor(None, self._arima_predict, prices, days)
+        except Exception as e:
+            logger.warning(f"ARIMA failed: {e}")
+            return self._simple_trend_prediction(prices, days)
+    
+    def _arima_predict(self, prices, days):
+        """Synchronous ARIMA prediction"""
         try:
             # Simple ARIMA(1,1,1) model
             model = ARIMA(prices, order=(1, 1, 1))
@@ -193,7 +219,7 @@ class PredictionService:
         confidence_intervals = []
         for i, pred in enumerate(predictions):
             # Increasing uncertainty over time
-            uncertainty = volatility * np.sqrt(i + 1) * pred
+            uncertainty = volatility * np.sqrt(i + 1) * pred * 0.1  # Scale factor
             lower_bound = pred - (1.96 * uncertainty)  # 95% confidence
             upper_bound = pred + (1.96 * uncertainty)
             confidence_intervals.append([lower_bound, upper_bound])
@@ -206,8 +232,21 @@ class PredictionService:
         recent_volatility = np.std(prices[-30:]) / np.mean(prices[-30:]) * 100
         trend_direction = "upward" if prices[-1] > prices[-30] else "downward"
         
-        return {
-            "recent_volatility_percent": round(recent_volatility, 2),
-            "trend_direction": trend_direction,
-            "data_points_used": len(prices)
-        }
+        return AccuracyMetrics(
+            recent_volatility_percent=round(recent_volatility, 2),
+            trend_direction=trend_direction,
+            data_points_used=len(prices)
+        )
+    
+    def _generate_business_dates(self, start_date, days):
+        """Generate business days (excluding weekends)"""
+        business_dates = []
+        current_date = start_date + timedelta(days=1)
+        
+        while len(business_dates) < days:
+            # Skip weekends (5=Saturday, 6=Sunday)
+            if current_date.weekday() < 5:
+                business_dates.append(current_date)
+            current_date += timedelta(days=1)
+        
+        return business_dates
