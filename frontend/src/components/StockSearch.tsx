@@ -97,11 +97,11 @@ const StockSearch: React.FC<StockSearchProps> = ({ onStockSelect }) => {
                 <TrendingDown color="error" fontSize="small" />
               }
               <Typography
-                color={stock.change_percent >= 0 ? 'success.main' : 'error.main'}
+                color={typeof stock.change_percent === 'number' && stock.change_percent >= 0 ? 'success.main' : 'error.main'}
                 fontWeight="medium"
                 variant="body2"
               >
-                {stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%
+                {typeof stock.change_percent === 'number' && stock.change_percent >= 0 ? '+' : ''}{typeof stock.change_percent === 'number' ? stock.change_percent.toFixed(2) : '--'}%
               </Typography>
             </Box>
           </Box>
