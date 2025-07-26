@@ -84,7 +84,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
           color={isPositive ? 'success.main' : 'error.main'}
           fontWeight="medium"
         >
-          {isPositive ? '+' : ''}{change.toFixed(2)} ({isPositive ? '+' : ''}{changePercent.toFixed(2)}%)
+          {isPositive ? '+' : ''}{typeof change === 'number' ? change.toFixed(2) : '-'} ({isPositive ? '+' : ''}{typeof changePercent === 'number' ? changePercent.toFixed(2) : '-'})
         </Typography>
       </Box>
     );
@@ -164,7 +164,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
               color={stock.change_percent >= 0 ? 'success.main' : 'error.main'}
               fontWeight="medium"
             >
-              {stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%
+              {stock.change_percent >= 0 ? '+' : ''}{typeof stock.change_percent === 'number' ? stock.change_percent.toFixed(2) : '-'}%
             </Typography>
           </Box>
         ))}

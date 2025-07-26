@@ -141,7 +141,7 @@ const PredictionChart: React.FC<PredictionChartProps> = ({ symbol }) => {
                           variant="body2" 
                           color={pred.change_percent >= 0 ? 'success.main' : 'error.main'}
                         >
-                          {pred.change_percent >= 0 ? '+' : ''}{pred.change_percent.toFixed(1)}%
+                          {pred.change_percent >= 0 ? '+' : ''}{typeof pred.change_percent === 'number' ? pred.change_percent.toFixed(1) : '-'}%
                         </Typography>
                       </CardContent>
                     </Card>
@@ -151,7 +151,7 @@ const PredictionChart: React.FC<PredictionChartProps> = ({ symbol }) => {
             )}
 
             <Typography variant="caption" color="text.secondary" display="block" mt={2}>
-              Volatility: {predictions.model_info.accuracy_metrics.recent_volatility_percent.toFixed(2)}% | 
+              Volatility: {typeof predictions.model_info.accuracy_metrics.recent_volatility_percent === 'number' ? predictions.model_info.accuracy_metrics.recent_volatility_percent.toFixed(2) : '-'}% | 
               Data points: {predictions.model_info.accuracy_metrics.data_points_used} | 
               Generated: {new Date(predictions.timestamp).toLocaleString()}
             </Typography>

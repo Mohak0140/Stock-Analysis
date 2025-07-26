@@ -101,7 +101,7 @@ const StockSearch: React.FC<StockSearchProps> = ({ onStockSelect }) => {
                 fontWeight="medium"
                 variant="body2"
               >
-                {stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%
+                {stock.change_percent >= 0 ? '+' : ''}{typeof stock.change_percent === 'number' ? stock.change_percent.toFixed(2) : '-'}%
               </Typography>
             </Box>
           </Box>
