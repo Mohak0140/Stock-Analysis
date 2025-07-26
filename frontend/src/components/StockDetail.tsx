@@ -151,8 +151,8 @@ const StockDetail: React.FC<StockDetailProps> = ({ symbol }) => {
                   fontWeight="bold"
                   variant="h6"
                 >
-                  {stock.change_percent >= 0 ? '+' : ''}{stock.change.toFixed(2)} 
-                  ({stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%)
+                  {typeof stock.change === 'number' && stock.change >= 0 ? '+' : ''}{typeof stock.change === 'number' ? stock.change.toFixed(2) : '--'} 
+                  ({typeof stock.change_percent === 'number' && stock.change_percent >= 0 ? '+' : ''}{typeof stock.change_percent === 'number' ? stock.change_percent.toFixed(2) : '--'}%)
                 </Typography>
               </Box>
             </CardContent>
@@ -187,7 +187,7 @@ const StockDetail: React.FC<StockDetailProps> = ({ symbol }) => {
                 {stock.pe_ratio && (
                   <Box display="flex" justifyContent="space-between">
                     <Typography color="text.secondary">P/E Ratio:</Typography>
-                    <Typography>{stock.pe_ratio.toFixed(2)}</Typography>
+                    <Typography>{typeof stock.pe_ratio === 'number' ? stock.pe_ratio.toFixed(2) : '--'}</Typography>
                   </Box>
                 )}
               </Box>
