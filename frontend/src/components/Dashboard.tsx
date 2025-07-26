@@ -75,8 +75,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
     }).format(price);
   };
 
-  const formatChange = (change: number, changePercent: number) => {
-    const isPositive = change >= 0;
+  const formatChange = (change: number | undefined, changePercent: number | undefined) => {
+    const isPositive = (change ?? 0) >= 0;
     return (
       <Box display="flex" alignItems="center" gap={0.5}>
         {isPositive ? <TrendingUp color="success" /> : <TrendingDown color="error" />}
@@ -84,7 +84,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
           color={isPositive ? 'success.main' : 'error.main'}
           fontWeight="medium"
         >
-          {isPositive ? '+' : ''}{change.toFixed(2)} ({isPositive ? '+' : ''}{changePercent.toFixed(2)}%)
+          {isPositive ? '+' : ''}{typeof change === 'number' ? change.toFixed(2) : '--'} ({isPositive ? '+' : ''}{typeof changePercent === 'number' ? changePercent.toFixed(2) : '--'}%)
         </Typography>
       </Box>
     );
@@ -161,10 +161,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
             </Box>
             <Typography 
               variant="body2" 
-              color={stock.change_percent >= 0 ? 'success.main' : 'error.main'}
+              color={typeof stock.change_percent === 'number' && stock.change_percent >= 0 ? 'success.main' : 'error.main'}
               fontWeight="medium"
             >
-              {stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%
+              {typeof stock.change_percent === 'number' && stock.change_percent >= 0 ? '+' : ''}{typeof stock.change_percent === 'number' ? stock.change_percent.toFixed(2) : '--'}%
             </Typography>
           </Box>
         ))}
