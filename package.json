@@ -1,0 +1,17 @@
+{
+  "name": "stock-analysis-platform",
+  "version": "1.0.0",
+  "description": "Modern stock analysis website with real-time prices and predictive analytics",
+  "scripts": {
+    "install-all": "cd frontend && npm install && cd ../backend && pip install -r requirements.txt",
+    "dev": "concurrently \"cd backend && python app.py\" \"cd frontend && npm start\"",
+    "build": "cd frontend && npm run build",
+    "start": "cd backend && python app.py"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "keywords": ["stock", "analysis", "prediction", "react", "flask"],
+  "author": "Stock Analysis Platform",
+  "license": "MIT"
+}
