@@ -14,6 +14,7 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Divider,
@@ -224,16 +225,16 @@ const AppContent: React.FC = () => {
       <Divider />
       <List>
         {menuItems.map((item) => (
-          <ListItem 
-            button 
-            key={item.text}
-            onClick={() => handleViewChange(item.view)}
-            selected={state.currentView === item.view}
-          >
-            <ListItemIcon>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={item.text} />
+          <ListItem disablePadding key={item.text}>
+            <ListItemButton
+              selected={state.currentView === item.view}
+              onClick={() => handleViewChange(item.view)}
+            >
+              <ListItemIcon>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
           </ListItem>
         ))}
       </List>

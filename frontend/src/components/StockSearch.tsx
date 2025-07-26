@@ -89,19 +89,19 @@ const StockSearch: React.FC<StockSearchProps> = ({ onStockSelect }) => {
           </Box>
           <Box textAlign="right">
             <Typography variant="h6" color="primary" fontWeight="bold">
-              {formatPrice(stock.currentPrice)}
+              {formatPrice(stock.current_price)}
             </Typography>
             <Box display="flex" alignItems="center" gap={0.5}>
-              {stock.changePercent >= 0 ? 
+              {stock.change_percent >= 0 ? 
                 <TrendingUp color="success" fontSize="small" /> : 
                 <TrendingDown color="error" fontSize="small" />
               }
               <Typography
-                color={stock.changePercent >= 0 ? 'success.main' : 'error.main'}
+                color={stock.change_percent >= 0 ? 'success.main' : 'error.main'}
                 fontWeight="medium"
                 variant="body2"
               >
-                {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                {stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%
               </Typography>
             </Box>
           </Box>

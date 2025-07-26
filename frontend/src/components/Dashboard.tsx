@@ -120,10 +120,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
         </Box>
         
         <Typography variant="h6" color="primary" fontWeight="bold" mb={1}>
-          {formatPrice(stock.currentPrice)}
+          {formatPrice(stock.current_price)}
         </Typography>
         
-        {formatChange(stock.change, stock.changePercent)}
+        {formatChange(stock.change, stock.change_percent)}
         
         {stock.volume > 0 && (
           <Typography variant="caption" color="text.secondary" display="block" mt={1}>
@@ -156,15 +156,15 @@ const Dashboard: React.FC<DashboardProps> = ({ onStockSelect }) => {
                 {stock.symbol}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {formatPrice(stock.currentPrice)}
+                {formatPrice(stock.current_price)}
               </Typography>
             </Box>
             <Typography 
               variant="body2" 
-              color={stock.changePercent >= 0 ? 'success.main' : 'error.main'}
+              color={stock.change_percent >= 0 ? 'success.main' : 'error.main'}
               fontWeight="medium"
             >
-              {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+              {stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%
             </Typography>
           </Box>
         ))}

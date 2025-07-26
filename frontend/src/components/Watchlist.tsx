@@ -129,23 +129,23 @@ const Watchlist: React.FC<WatchlistProps> = ({ onStockSelect }) => {
         {item.stockData && (
           <>
             <Typography variant="h6" color="primary" fontWeight="bold" mb={1}>
-              {formatPrice(item.stockData.currentPrice)}
+              {formatPrice(item.stockData.current_price)}
             </Typography>
             
             <Box display="flex" alignItems="center" gap={0.5}>
-              {item.stockData.changePercent >= 0 ? 
+              {item.stockData.change_percent >= 0 ? 
                 <TrendingUp color="success" fontSize="small" /> : 
                 <TrendingDown color="error" fontSize="small" />
               }
               <Typography
-                color={item.stockData.changePercent >= 0 ? 'success.main' : 'error.main'}
+                color={item.stockData.change_percent >= 0 ? 'success.main' : 'error.main'}
                 fontWeight="medium"
                 variant="body2"
               >
-                {item.stockData.changePercent >= 0 ? '+' : ''}
+                {item.stockData.change_percent >= 0 ? '+' : ''}
                 {item.stockData.change.toFixed(2)} 
-                ({item.stockData.changePercent >= 0 ? '+' : ''}
-                {item.stockData.changePercent.toFixed(2)}%)
+                ({item.stockData.change_percent >= 0 ? '+' : ''}
+                {item.stockData.change_percent.toFixed(2)}%)
               </Typography>
             </Box>
 

@@ -62,3 +62,19 @@ export interface SearchResponse {
   results: StockData[];
   count: number;
 }
+
+interface WatchlistItem {
+  symbol: string;
+  addedAt: string;
+  alertPrice?: number;
+  notes?: string;
+  stockData?: {
+    symbol: string;
+    name: string;
+    current_price: number;
+    change: number;
+    change_percent: number;
+    volume: number;
+    sector?: string;
+  };
+}

@@ -139,20 +139,20 @@ const StockDetail: React.FC<StockDetailProps> = ({ symbol }) => {
                 Current Price
               </Typography>
               <Typography variant="h3" color="primary" fontWeight="bold" gutterBottom>
-                {formatPrice(stock.currentPrice)}
+                {formatPrice(stock.current_price)}
               </Typography>
               <Box display="flex" alignItems="center" gap={1}>
-                {stock.changePercent >= 0 ? 
+                {stock.change_percent >= 0 ? 
                   <TrendingUp color="success" /> : 
                   <TrendingDown color="error" />
                 }
                 <Typography
-                  color={stock.changePercent >= 0 ? 'success.main' : 'error.main'}
+                  color={stock.change_percent >= 0 ? 'success.main' : 'error.main'}
                   fontWeight="bold"
                   variant="h6"
                 >
-                  {stock.changePercent >= 0 ? '+' : ''}{stock.change.toFixed(2)} 
-                  ({stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)
+                  {stock.change_percent >= 0 ? '+' : ''}{stock.change.toFixed(2)} 
+                  ({stock.change_percent >= 0 ? '+' : ''}{stock.change_percent.toFixed(2)}%)
                 </Typography>
               </Box>
             </CardContent>
