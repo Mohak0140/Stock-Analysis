@@ -143,9 +143,9 @@ const Watchlist: React.FC<WatchlistProps> = ({ onStockSelect }) => {
                 variant="body2"
               >
                 {item.stockData.changePercent >= 0 ? '+' : ''}
-                {item.stockData.change.toFixed(2)} 
+                {typeof item.stockData.change === 'number' ? item.stockData.change.toFixed(2) : '-'} 
                 ({item.stockData.changePercent >= 0 ? '+' : ''}
-                {item.stockData.changePercent.toFixed(2)}%)
+                {typeof item.stockData.changePercent === 'number' ? item.stockData.changePercent.toFixed(2) : '-'})%
               </Typography>
             </Box>
 
