@@ -1,0 +1,31 @@
+{
+  "name": "stock-analysis-platform",
+  "version": "1.0.0",
+  "description": "Modern stock analysis website with real-time prices and predictive analytics using MERN stack",
+  "scripts": {
+    "install-all": "npm install && cd frontend && npm install && cd ../backend && npm install",
+    "install-backend": "cd backend && npm install",
+    "install-frontend": "cd frontend && npm install",
+    "install-prediction": "cd prediction-service && pip install -r requirements.txt",
+    "dev": "concurrently \"npm run dev-backend\" \"npm run dev-frontend\" \"npm run dev-prediction\"",
+    "dev-backend": "cd backend && npm run dev",
+    "dev-frontend": "cd frontend && npm start",
+    "dev-prediction": "cd prediction-service && python main.py",
+    "start-backend": "cd backend && npm start",
+    "start-frontend": "cd frontend && npm run build && serve -s build",
+    "start-prediction": "cd prediction-service && uvicorn main:app --host 0.0.0.0 --port 8000",
+    "build": "cd frontend && npm run build",
+    "test": "cd backend && npm test && cd ../frontend && npm test",
+    "setup": "npm run install-all && npm run install-prediction"
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "serve": "^14.2.1"
+  },
+  "keywords": ["stock", "analysis", "prediction", "react", "express", "mongodb", "nodejs", "python", "MERN"],
+  "author": "Stock Analysis Platform",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
