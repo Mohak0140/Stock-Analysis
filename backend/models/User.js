@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const watchlistItemSchema = new mongoose.Schema({
   symbol: {
@@ -26,6 +27,11 @@ const userSchema = new mongoose.Schema({
     unique: true,
     lowercase: true,
     trim: true
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 6
   },
   name: {
     type: String,
@@ -96,6 +102,40 @@ userSchema.methods.removeFromWatchlist = function(symbol) {
 // Method to get watchlist symbols
 userSchema.methods.getWatchlistSymbols = function() {
   return this.watchlist.map(item => item.symbol);
+};
+
+// Hash password before saving
+userSchema.pre('save', async function(next) {
+  // Only hash the password if it has been modified (or is new)
+  if (!this.isModified('password')) return next();
+  
+  try {
+    // Hash password with cost of 12
+    const hashedPassword = await bcrypt.hash(this.password, 12);
+    this.password = hashedPassword;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Method to check password
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+// Method to get user object without password
+userSchema.methods.toAuthJSON = function() {
+  return {
+    _id: this._id,
+    email: this.email,
+    name: this.name,
+    watchlist: this.watchlist,
+    preferences: this.preferences,
+    lastLogin: this.lastLogin,
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt
+  };
 };
 
 module.exports = mongoose.model('User', userSchema);

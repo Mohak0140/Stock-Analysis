@@ -4,12 +4,14 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 const logger = require('./utils/logger');
 const stockRoutes = require('./routes/stocks');
 const predictionRoutes = require('./routes/predictions');
 const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -36,6 +38,7 @@ app.use(cors({
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Logging middleware
 app.use((req, res, next) => {
@@ -54,6 +57,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/stock_ana
   });
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/stocks', stockRoutes);
 app.use('/api/predictions', predictionRoutes);
 app.use('/api/users', userRoutes);
@@ -74,6 +78,7 @@ app.get('/', (req, res) => {
     message: 'Stock Analysis Platform API',
     version: '1.0.0',
     endpoints: {
+      auth: '/api/auth',
       stocks: '/api/stocks',
       predictions: '/api/predictions',
       users: '/api/users',
