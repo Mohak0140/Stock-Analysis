@@ -64,3 +64,27 @@
 {"level":"info","message":"GET /api/stocks/AAPL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:14:08.530Z"}
 {"level":"info","message":"GET /favicon.ico - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:14:08.537Z"}
 {"level":"info","message":"GET /api/health - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:14:08.544Z"}
+{"level":"info","message":"SIGTERM received. Shutting down gracefully...","service":"stock-analysis-backend","timestamp":"2025-07-27T15:30:51.197Z"}
+{"level":"warn","message":"API keys not properly configured. Some features may not work correctly.","service":"stock-analysis-backend","timestamp":"2025-07-27T15:30:51.504Z"}
+{"level":"warn","message":"Please get API keys from:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:30:51.506Z"}
+{"level":"warn","message":"- Alpha Vantage: https://www.alphavantage.co/support/#api-key","service":"stock-analysis-backend","timestamp":"2025-07-27T15:30:51.506Z"}
+{"level":"warn","message":"- Finnhub: https://finnhub.io/register","service":"stock-analysis-backend","timestamp":"2025-07-27T15:30:51.506Z"}
+{"level":"info","message":"Server running on port 5000 in development mode","service":"stock-analysis-backend","timestamp":"2025-07-27T15:30:51.581Z"}
+{"level":"warn","message":"⚠️  Running without database - some features may be limited","service":"stock-analysis-backend","timestamp":"2025-07-27T15:30:51.581Z"}
+{"level":"warn","message":"⚠️  Using demo API keys - please configure real API keys for full functionality","service":"stock-analysis-backend","timestamp":"2025-07-27T15:30:51.581Z"}
+{"level":"info","message":"GET /api/predictions/AAPL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:04.762Z"}
+{"level":"error","message":"Error getting predictions for AAPL:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:04.769Z"}
+{"level":"info","message":"GET /api/predictions/AAPL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:17.615Z"}
+{"level":"error","message":"Error getting predictions for AAPL:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:17.618Z"}
+{"level":"warn","message":"MongoDB connection failed:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:21.579Z"}
+{"level":"warn","message":"Running in fallback mode without database persistence","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:21.580Z"}
+{"level":"warn","message":"Data will be stored in memory only","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:21.580Z"}
+{"level":"info","message":"To fix this issue:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:21.580Z"}
+{"level":"info","message":"1. Install MongoDB: sudo apt-get install mongodb-org","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:21.580Z"}
+{"level":"info","message":"2. Start MongoDB: sudo systemctl start mongod","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:21.580Z"}
+{"level":"info","message":"3. Or use a cloud MongoDB service like MongoDB Atlas","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:21.580Z"}
+{"level":"info","message":"GET /api/predictions/AAPL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:23.460Z"}
+{"level":"error","message":"Error getting predictions for AAPL:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:23.464Z"}
+{"level":"info","message":"GET /api/predictions/AAPL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:59.754Z"}
+{"level":"error","message":"Error getting predictions for AAPL:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:59.756Z"}
+{"level":"info","message":"GET /api/health - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:59.763Z"}

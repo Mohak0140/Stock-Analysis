@@ -103,26 +103,35 @@ const PredictionChart: React.FC<PredictionChartProps> = ({ symbol }) => {
                 color="primary" 
                 variant="outlined" 
               />
-              <Chip 
-                label={`Methods: ${predictions.model_info.methods_used.join(', ')}`} 
-                variant="outlined" 
-              />
-              <Chip 
-                label={`Trend: ${predictions.model_info.accuracy_metrics.trend_direction}`} 
-                color={predictions.model_info.accuracy_metrics.trend_direction === 'upward' ? 'success' : 'error'}
-                variant="outlined" 
-              />
+              {predictions.model_info?.methods_used && (
+                <Chip 
+                  label={`Methods: ${predictions.model_info.methods_used.join(', ')}`} 
+                  variant="outlined" 
+                />
+              )}
+              {predictions.model_info?.accuracy_metrics?.trend_direction && (
+                <Chip 
+                  label={`Trend: ${predictions.model_info.accuracy_metrics.trend_direction}`} 
+                  color={predictions.model_info.accuracy_metrics.trend_direction === 'upward' ? 'success' : 'error'}
+                  variant="outlined" 
+                />
+              )}
             </Box>
 
             <Alert severity="info" sx={{ mb: 2 }}>
               <Typography variant="body2">
-                Predictions are generated using ensemble auto-regression models including 
-                AutoRegression, Linear Regression, and ARIMA. These are estimates and should 
-                not be used as the sole basis for investment decisions.
+                {predictions.isMockData ? (
+                  <>Predictions are generated using mock data for demonstration purposes. 
+                  Real predictions require a configured prediction service.</>
+                ) : (
+                  <>Predictions are generated using ensemble auto-regression models including 
+                  AutoRegression, Linear Regression, and ARIMA. These are estimates and should 
+                  not be used as the sole basis for investment decisions.</>
+                )}
               </Typography>
             </Alert>
 
-            {predictions.predictions.length > 0 && (
+            {predictions.predictions && predictions.predictions.length > 0 && (
               <Box>
                 <Typography variant="h6" gutterBottom>
                   Prediction Summary
@@ -151,8 +160,12 @@ const PredictionChart: React.FC<PredictionChartProps> = ({ symbol }) => {
             )}
 
             <Typography variant="caption" color="text.secondary" display="block" mt={2}>
-              Volatility: {predictions.model_info.accuracy_metrics.recent_volatility_percent.toFixed(2)}% | 
-              Data points: {predictions.model_info.accuracy_metrics.data_points_used} | 
+              {predictions.model_info?.accuracy_metrics?.recent_volatility_percent && (
+                <>Volatility: {predictions.model_info.accuracy_metrics.recent_volatility_percent.toFixed(2)}% | </>
+              )}
+              {predictions.model_info?.accuracy_metrics?.data_points_used && (
+                <>Data points: {predictions.model_info.accuracy_metrics.data_points_used} | </>
+              )}
               Generated: {new Date(predictions.timestamp).toLocaleString()}
             </Typography>
           </Box>

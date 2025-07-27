@@ -436,10 +436,32 @@ class StockService {
     } catch (error) {
       logger.error(`Error getting predictions for ${symbol}:`, error.message);
       
-      // Return mock predictions as fallback
+      // Return mock predictions as fallback with proper structure
+      const currentStock = this.memoryCache?.get(symbol.toUpperCase());
+      const currentPrice = currentStock?.currentPrice || 100 + Math.random() * 400;
+      const predictions = this.generateMockPredictions(symbol, days);
+      
       return {
         symbol: symbol.toUpperCase(),
-        predictions: this.generateMockPredictions(symbol, days),
+        current_price: currentPrice,
+        prediction_period: `${days} days`,
+        predictions: predictions.map(pred => ({
+          ...pred,
+          lower_bound: pred.predicted_price * 0.95,
+          upper_bound: pred.predicted_price * 1.05,
+          change_from_current: pred.predicted_price - currentPrice,
+          change_percent: ((pred.predicted_price - currentPrice) / currentPrice) * 100
+        })),
+        model_info: {
+          methods_used: ['AutoRegression', 'Linear Regression', 'ARIMA'],
+          ensemble: 'ensemble_auto_regression',
+          accuracy_metrics: {
+            recent_volatility_percent: Math.random() * 5 + 2, // 2-7% volatility
+            trend_direction: Math.random() > 0.5 ? 'upward' : 'downward',
+            data_points_used: Math.floor(Math.random() * 50) + 100 // 100-150 data points
+          }
+        },
+        timestamp: new Date().toISOString(),
         isMockData: true,
         message: 'Prediction service unavailable - showing mock data'
       };
