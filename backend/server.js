@@ -76,6 +76,11 @@ app.use('/api/stocks', stockRoutes);
 app.use('/api/predictions', predictionRoutes);
 app.use('/api/users', userRoutes);
 
+// Favicon handler to prevent 404 errors
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end(); // No content
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({

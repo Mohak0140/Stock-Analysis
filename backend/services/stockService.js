@@ -57,7 +57,7 @@ class StockService {
     try {
       // If no valid API key, return mock data
       if (!this.finnhubKey || this.finnhubKey === 'demo') {
-        logger.warn(`Using mock data for ${symbol} - invalid or demo Finnhub API key`);
+        logger.info(`Using mock data for ${symbol} - demo API key detected`);
         return this.generateMockStockData(symbol);
       }
 
@@ -66,7 +66,7 @@ class StockService {
           symbol: symbol.toUpperCase(),
           token: this.finnhubKey
         },
-        timeout: 5000
+        timeout: 3000 // Reduced timeout for faster fallback
       });
 
       const data = response.data;
@@ -87,7 +87,11 @@ class StockService {
         timestamp: new Date()
       };
     } catch (error) {
-      logger.error(`Error fetching real-time data for ${symbol}:`, error.message);
+      if (this.finnhubKey === 'demo') {
+        logger.info(`Using mock data for ${symbol} - demo API key cannot access real data`);
+      } else {
+        logger.error(`Error fetching real-time data for ${symbol}:`, error.message);
+      }
       logger.info(`Falling back to mock data for ${symbol}`);
       return this.generateMockStockData(symbol);
     }
@@ -98,6 +102,7 @@ class StockService {
     try {
       // If no valid API key, return basic mock profile
       if (!this.finnhubKey || this.finnhubKey === 'demo') {
+        logger.info(`Using mock profile for ${symbol} - demo API key detected`);
         return {
           name: `${symbol.toUpperCase()} Inc.`,
           finnhubIndustry: 'Technology',
@@ -112,12 +117,16 @@ class StockService {
           symbol: symbol.toUpperCase(),
           token: this.finnhubKey
         },
-        timeout: 5000
+        timeout: 3000 // Reduced timeout for faster fallback
       });
 
       return response.data;
     } catch (error) {
-      logger.error(`Error fetching company profile for ${symbol}:`, error.message);
+      if (this.finnhubKey === 'demo') {
+        logger.info(`Using mock profile for ${symbol} - demo API key cannot access real data`);
+      } else {
+        logger.error(`Error fetching company profile for ${symbol}:`, error.message);
+      }
       return {
         name: `${symbol.toUpperCase()} Inc.`,
         finnhubIndustry: 'Technology',
@@ -133,7 +142,7 @@ class StockService {
     try {
       // If no valid API key, generate mock historical data
       if (!this.alphaVantageKey || this.alphaVantageKey === 'demo') {
-        logger.warn(`Using mock historical data for ${symbol} - invalid or demo Alpha Vantage API key`);
+        logger.info(`Using mock historical data for ${symbol} - demo API key detected`);
         return this.generateMockHistoricalData(symbol);
       }
 
@@ -144,7 +153,7 @@ class StockService {
           outputsize: outputSize,
           apikey: this.alphaVantageKey
         },
-        timeout: 10000
+        timeout: 5000 // Reduced timeout for faster fallback
       });
 
       const data = response.data;
@@ -171,7 +180,11 @@ class StockService {
 
       return historicalData.sort((a, b) => new Date(a.date) - new Date(b.date));
     } catch (error) {
-      logger.error(`Error fetching historical data for ${symbol}:`, error.message);
+      if (this.alphaVantageKey === 'demo') {
+        logger.info(`Using mock historical data for ${symbol} - demo API key cannot access real data`);
+      } else {
+        logger.error(`Error fetching historical data for ${symbol}:`, error.message);
+      }
       logger.info(`Falling back to mock historical data for ${symbol}`);
       return this.generateMockHistoricalData(symbol);
     }

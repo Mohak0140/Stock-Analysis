@@ -72,7 +72,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes
-userSchema.index({ email: 1 });
+// Note: email index is automatically created by unique: true
 userSchema.index({ 'watchlist.symbol': 1 });
 
 // Method to add stock to watchlist
