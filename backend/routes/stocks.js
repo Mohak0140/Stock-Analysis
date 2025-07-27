@@ -153,6 +153,37 @@ router.put('/:symbol/update', async (req, res, next) => {
 // @access  Public
 router.get('/market/stats', async (req, res, next) => {
   try {
+    if (!global.mongoConnected) {
+      // Use trending stocks as fallback when MongoDB is not available
+      const trendingStocks = await stockService.getTrendingStocks(10);
+      
+      // Create mock market stats from trending data
+      const topGainers = trendingStocks
+        .filter(stock => stock.change_percent > 0)
+        .sort((a, b) => b.change_percent - a.change_percent)
+        .slice(0, 5);
+      
+      const topLosers = trendingStocks
+        .filter(stock => stock.change_percent < 0)
+        .sort((a, b) => a.change_percent - b.change_percent)
+        .slice(0, 5);
+      
+      const mostActive = trendingStocks
+        .sort((a, b) => (b.volume || 0) - (a.volume || 0))
+        .slice(0, 5);
+
+      return res.json({
+        success: true,
+        data: {
+          totalStocks: 10, // Mock value
+          topGainers,
+          topLosers,
+          mostActive,
+          lastUpdated: new Date()
+        }
+      });
+    }
+
     const totalStocks = await Stock.countDocuments({ isActive: true });
     const topGainers = await Stock.find({ isActive: true })
       .sort({ changePercent: -1 })
@@ -169,13 +200,22 @@ router.get('/market/stats', async (req, res, next) => {
       .limit(5)
       .select('symbol name currentPrice volume');
 
+    // Transform data to match frontend expectations
+    const transformStock = (stock) => ({
+      symbol: stock.symbol,
+      name: stock.name,
+      current_price: stock.currentPrice,
+      change_percent: stock.changePercent,
+      volume: stock.volume
+    });
+
     res.json({
       success: true,
       data: {
         totalStocks,
-        topGainers,
-        topLosers,
-        mostActive,
+        topGainers: topGainers.map(transformStock),
+        topLosers: topLosers.map(transformStock),
+        mostActive: mostActive.map(transformStock),
         lastUpdated: new Date()
       }
     });

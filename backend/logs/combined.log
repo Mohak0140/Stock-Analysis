@@ -88,3 +88,84 @@
 {"level":"info","message":"GET /api/predictions/AAPL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:59.754Z"}
 {"level":"error","message":"Error getting predictions for AAPL:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:59.756Z"}
 {"level":"info","message":"GET /api/health - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:59.763Z"}
+{"level":"info","message":"GET /api/stocks/trending - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T16:08:43.534Z"}
+{"level":"info","message":"Using mock data for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:08:43.538Z"}
+{"level":"info","message":"Using mock profile for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:08:43.539Z"}
+{"level":"info","message":"Using mock historical data for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:08:43.539Z"}
+{"level":"info","message":"Using mock data for GOOGL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:08:43.540Z"}
+{"level":"info","message":"Using mock profile for GOOGL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:08:43.540Z"}
+{"level":"info","message":"Using mock historical data for GOOGL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:08:43.540Z"}
+{"level":"info","message":"SIGTERM received. Shutting down gracefully...","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:51.737Z"}
+{"level":"warn","message":"API keys not properly configured. Some features may not work correctly.","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:52.045Z"}
+{"level":"warn","message":"Please get API keys from:","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:52.047Z"}
+{"level":"warn","message":"- Alpha Vantage: https://www.alphavantage.co/support/#api-key","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:52.048Z"}
+{"level":"warn","message":"- Finnhub: https://finnhub.io/register","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:52.048Z"}
+{"level":"info","message":"Server running on port 5000 in development mode","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:52.125Z"}
+{"level":"warn","message":"⚠️  Running without database - some features may be limited","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:52.125Z"}
+{"level":"warn","message":"⚠️  Using demo API keys - please configure real API keys for full functionality","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:52.125Z"}
+{"level":"info","message":"GET /api/stocks/trending - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:59.612Z"}
+{"level":"info","message":"Using mock data for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:59.612Z"}
+{"level":"info","message":"Using mock profile for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:59.613Z"}
+{"level":"info","message":"Using mock historical data for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:59.613Z"}
+{"level":"info","message":"Using mock data for GOOGL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:59.614Z"}
+{"level":"info","message":"Using mock profile for GOOGL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:59.614Z"}
+{"level":"info","message":"Using mock historical data for GOOGL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:10:59.614Z"}
+{"level":"info","message":"GET /api/stocks/market/stats - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:05.418Z"}
+{"level":"error","message":"Operation `stocks.countDocuments()` buffering timed out after 10000ms","service":"stock-analysis-backend","stack":"MongooseError: Operation `stocks.countDocuments()` buffering timed out after 10000ms\n    at Timeout.<anonymous> (/workspace/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/collection.js:187:23)\n    at listOnTimeout (node:internal/timers:588:17)\n    at process.processTimers (node:internal/timers:523:7)","timestamp":"2025-07-27T16:11:15.423Z"}
+{"level":"warn","message":"MongoDB connection failed:","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:22.124Z"}
+{"level":"warn","message":"Running in fallback mode without database persistence","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:22.124Z"}
+{"level":"warn","message":"Data will be stored in memory only","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:22.124Z"}
+{"level":"info","message":"To fix this issue:","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:22.124Z"}
+{"level":"info","message":"1. Install MongoDB: sudo apt-get install mongodb-org","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:22.124Z"}
+{"level":"info","message":"2. Start MongoDB: sudo systemctl start mongod","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:22.124Z"}
+{"level":"info","message":"3. Or use a cloud MongoDB service like MongoDB Atlas","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:22.124Z"}
+{"level":"info","message":"SIGTERM received. Shutting down gracefully...","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:37.649Z"}
+{"level":"warn","message":"API keys not properly configured. Some features may not work correctly.","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:37.875Z"}
+{"level":"warn","message":"Please get API keys from:","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:37.877Z"}
+{"level":"warn","message":"- Alpha Vantage: https://www.alphavantage.co/support/#api-key","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:37.877Z"}
+{"level":"warn","message":"- Finnhub: https://finnhub.io/register","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:37.877Z"}
+{"level":"info","message":"Server running on port 5000 in development mode","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:37.938Z"}
+{"level":"warn","message":"⚠️  Running without database - some features may be limited","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:37.939Z"}
+{"level":"warn","message":"⚠️  Using demo API keys - please configure real API keys for full functionality","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:37.939Z"}
+{"level":"info","message":"GET /api/stocks/market/stats - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.975Z"}
+{"level":"info","message":"Using mock data for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.976Z"}
+{"level":"info","message":"Using mock profile for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.976Z"}
+{"level":"info","message":"Using mock historical data for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.976Z"}
+{"level":"info","message":"Using mock data for GOOGL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock profile for GOOGL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock historical data for GOOGL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock data for MSFT - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock profile for MSFT - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock historical data for MSFT - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock data for AMZN - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock profile for AMZN - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock historical data for AMZN - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock data for TSLA - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock profile for TSLA - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock historical data for TSLA - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock data for META - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.977Z"}
+{"level":"info","message":"Using mock profile for META - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock historical data for META - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock data for NVDA - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock profile for NVDA - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock historical data for NVDA - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock data for NFLX - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock profile for NFLX - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock historical data for NFLX - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock data for AMD - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock profile for AMD - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock historical data for AMD - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock data for PYPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock profile for PYPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"Using mock historical data for PYPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:46.978Z"}
+{"level":"info","message":"GET /api/stocks/AAPL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T16:11:52.832Z"}
+{"level":"warn","message":"MongoDB connection failed:","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:07.937Z"}
+{"level":"warn","message":"Running in fallback mode without database persistence","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:07.938Z"}
+{"level":"warn","message":"Data will be stored in memory only","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:07.938Z"}
+{"level":"info","message":"To fix this issue:","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:07.938Z"}
+{"level":"info","message":"1. Install MongoDB: sudo apt-get install mongodb-org","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:07.938Z"}
+{"level":"info","message":"2. Start MongoDB: sudo systemctl start mongod","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:07.938Z"}
+{"level":"info","message":"3. Or use a cloud MongoDB service like MongoDB Atlas","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:07.938Z"}
+{"level":"info","message":"GET /api/stocks/trending - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:30.441Z"}
+{"level":"info","message":"GET /api/stocks/MSFT - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:30.448Z"}
+{"level":"info","message":"GET /api/stocks/market/stats - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T16:12:30.455Z"}

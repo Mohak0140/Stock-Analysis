@@ -3,3 +3,4 @@
 {"level":"error","message":"Error getting predictions for AAPL:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:17.618Z"}
 {"level":"error","message":"Error getting predictions for AAPL:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:23.464Z"}
 {"level":"error","message":"Error getting predictions for AAPL:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:31:59.756Z"}
+{"level":"error","message":"Operation `stocks.countDocuments()` buffering timed out after 10000ms","service":"stock-analysis-backend","stack":"MongooseError: Operation `stocks.countDocuments()` buffering timed out after 10000ms\n    at Timeout.<anonymous> (/workspace/backend/node_modules/mongoose/lib/drivers/node-mongodb-native/collection.js:187:23)\n    at listOnTimeout (node:internal/timers:588:17)\n    at process.processTimers (node:internal/timers:523:7)","timestamp":"2025-07-27T16:11:15.423Z"}
