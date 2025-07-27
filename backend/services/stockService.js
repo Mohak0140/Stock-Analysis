@@ -13,11 +13,54 @@ class StockService {
       'AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', 
       'META', 'NVDA', 'NFLX', 'AMD', 'PYPL'
     ];
+
+    // Check if API keys are properly set
+    this.hasValidKeys = this.checkApiKeys();
+  }
+
+  checkApiKeys() {
+    const hasAlphaVantage = this.alphaVantageKey && this.alphaVantageKey !== 'demo';
+    const hasFinnhub = this.finnhubKey && this.finnhubKey !== 'demo';
+    
+    if (!hasAlphaVantage || !hasFinnhub) {
+      logger.warn('API keys not properly configured. Some features may not work correctly.');
+      logger.warn('Please get API keys from:');
+      logger.warn('- Alpha Vantage: https://www.alphavantage.co/support/#api-key');
+      logger.warn('- Finnhub: https://finnhub.io/register');
+    }
+    
+    return hasAlphaVantage && hasFinnhub;
+  }
+
+  // Generate mock data for demo purposes
+  generateMockStockData(symbol) {
+    const basePrice = 100 + Math.random() * 400; // Random price between 100-500
+    const change = (Math.random() - 0.5) * 10; // Random change between -5 to +5
+    const changePercent = (change / basePrice) * 100;
+
+    return {
+      symbol: symbol.toUpperCase(),
+      currentPrice: Math.round(basePrice * 100) / 100,
+      change: Math.round(change * 100) / 100,
+      changePercent: Math.round(changePercent * 100) / 100,
+      high: Math.round((basePrice + Math.abs(change) + Math.random() * 5) * 100) / 100,
+      low: Math.round((basePrice - Math.abs(change) - Math.random() * 5) * 100) / 100,
+      open: Math.round((basePrice - change + (Math.random() - 0.5) * 2) * 100) / 100,
+      previousClose: Math.round((basePrice - change) * 100) / 100,
+      timestamp: new Date(),
+      isMockData: true
+    };
   }
 
   // Get real-time stock data using Finnhub API
   async getRealTimeData(symbol) {
     try {
+      // If no valid API key, return mock data
+      if (!this.finnhubKey || this.finnhubKey === 'demo') {
+        logger.warn(`Using mock data for ${symbol} - invalid or demo Finnhub API key`);
+        return this.generateMockStockData(symbol);
+      }
+
       const response = await axios.get(`https://finnhub.io/api/v1/quote`, {
         params: {
           symbol: symbol.toUpperCase(),
@@ -28,7 +71,8 @@ class StockService {
 
       const data = response.data;
       if (!data.c) {
-        throw new Error('No data available for this symbol');
+        logger.warn(`No real data available for ${symbol}, using mock data`);
+        return this.generateMockStockData(symbol);
       }
 
       return {
@@ -44,13 +88,25 @@ class StockService {
       };
     } catch (error) {
       logger.error(`Error fetching real-time data for ${symbol}:`, error.message);
-      throw error;
+      logger.info(`Falling back to mock data for ${symbol}`);
+      return this.generateMockStockData(symbol);
     }
   }
 
   // Get company profile
   async getCompanyProfile(symbol) {
     try {
+      // If no valid API key, return basic mock profile
+      if (!this.finnhubKey || this.finnhubKey === 'demo') {
+        return {
+          name: `${symbol.toUpperCase()} Inc.`,
+          finnhubIndustry: 'Technology',
+          industry: 'Software',
+          description: `Mock description for ${symbol.toUpperCase()}`,
+          isMockData: true
+        };
+      }
+
       const response = await axios.get(`https://finnhub.io/api/v1/stock/profile2`, {
         params: {
           symbol: symbol.toUpperCase(),
@@ -62,13 +118,25 @@ class StockService {
       return response.data;
     } catch (error) {
       logger.error(`Error fetching company profile for ${symbol}:`, error.message);
-      return null;
+      return {
+        name: `${symbol.toUpperCase()} Inc.`,
+        finnhubIndustry: 'Technology',
+        industry: 'Software',
+        description: `Mock description for ${symbol.toUpperCase()}`,
+        isMockData: true
+      };
     }
   }
 
   // Get historical data using Alpha Vantage
   async getHistoricalData(symbol, period = 'daily', outputSize = 'compact') {
     try {
+      // If no valid API key, generate mock historical data
+      if (!this.alphaVantageKey || this.alphaVantageKey === 'demo') {
+        logger.warn(`Using mock historical data for ${symbol} - invalid or demo Alpha Vantage API key`);
+        return this.generateMockHistoricalData(symbol);
+      }
+
       const response = await axios.get(`https://www.alphavantage.co/query`, {
         params: {
           function: 'TIME_SERIES_DAILY',
@@ -104,8 +172,43 @@ class StockService {
       return historicalData.sort((a, b) => new Date(a.date) - new Date(b.date));
     } catch (error) {
       logger.error(`Error fetching historical data for ${symbol}:`, error.message);
-      throw error;
+      logger.info(`Falling back to mock historical data for ${symbol}`);
+      return this.generateMockHistoricalData(symbol);
     }
+  }
+
+  // Generate mock historical data
+  generateMockHistoricalData(symbol) {
+    const historicalData = [];
+    const basePrice = 100 + Math.random() * 400;
+    let currentPrice = basePrice;
+    
+    // Generate 30 days of mock data
+    for (let i = 30; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      
+      // Random walk for price movement
+      const change = (Math.random() - 0.5) * currentPrice * 0.05; // 5% max change
+      currentPrice = Math.max(currentPrice + change, 1); // Ensure price doesn't go below 1
+      
+      const open = currentPrice + (Math.random() - 0.5) * currentPrice * 0.02;
+      const high = Math.max(open, currentPrice) + Math.random() * currentPrice * 0.03;
+      const low = Math.min(open, currentPrice) - Math.random() * currentPrice * 0.03;
+      const volume = Math.floor(1000000 + Math.random() * 5000000);
+
+      historicalData.push({
+        date: new Date(date.toDateString()), // Remove time component
+        open: Math.round(open * 100) / 100,
+        high: Math.round(high * 100) / 100,
+        low: Math.round(Math.max(low, 1) * 100) / 100,
+        close: Math.round(currentPrice * 100) / 100,
+        volume: volume,
+        isMockData: true
+      });
+    }
+
+    return historicalData;
   }
 
   // Update or create stock in database
@@ -117,44 +220,69 @@ class StockService {
       // Get company profile
       const profile = await this.getCompanyProfile(symbol);
 
-      // Find existing stock or create new one
-      let stock = await Stock.findOne({ symbol: symbol.toUpperCase() });
-      
-      if (!stock) {
-        stock = new Stock({
-          symbol: symbol.toUpperCase(),
-          name: profile?.name || symbol.toUpperCase(),
-          sector: profile?.finnhubIndustry,
-          industry: profile?.industry,
-          description: profile?.description
-        });
-      }
+      const stockData = {
+        symbol: symbol.toUpperCase(),
+        name: profile?.name || `${symbol.toUpperCase()} Inc.`,
+        sector: profile?.finnhubIndustry,
+        industry: profile?.industry,
+        description: profile?.description,
+        currentPrice: realTimeData.currentPrice,
+        change: realTimeData.change,
+        changePercent: realTimeData.changePercent,
+        marketCap: profile?.marketCapitalization,
+        peRatio: profile?.peRatio,
+        lastUpdated: new Date(),
+        isMockData: realTimeData.isMockData || profile?.isMockData || false
+      };
 
-      // Update current data
-      stock.currentPrice = realTimeData.currentPrice;
-      stock.change = realTimeData.change;
-      stock.changePercent = realTimeData.changePercent;
-      stock.marketCap = profile?.marketCapitalization;
-      stock.peRatio = profile?.peRatio;
-
-      // Try to get and update historical data
-      try {
-        const historicalData = await this.getHistoricalData(symbol);
-        if (historicalData && historicalData.length > 0) {
-          // Keep only last 365 days of data
-          const oneYearAgo = new Date();
-          oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-          
-          stock.historicalData = historicalData.filter(
-            data => new Date(data.date) >= oneYearAgo
-          );
+      // If MongoDB is connected, use database
+      if (global.mongoConnected) {
+        // Find existing stock or create new one
+        let stock = await Stock.findOne({ symbol: symbol.toUpperCase() });
+        
+        if (!stock) {
+          stock = new Stock(stockData);
+        } else {
+          Object.assign(stock, stockData);
         }
-      } catch (histError) {
-        logger.warn(`Could not update historical data for ${symbol}:`, histError.message);
-      }
 
-      await stock.save();
-      return stock;
+        // Try to get and update historical data
+        try {
+          const historicalData = await this.getHistoricalData(symbol);
+          if (historicalData && historicalData.length > 0) {
+            // Keep only last 365 days of data
+            const oneYearAgo = new Date();
+            oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+            
+            stock.historicalData = historicalData.filter(
+              data => new Date(data.date) >= oneYearAgo
+            );
+          }
+        } catch (histError) {
+          logger.warn(`Could not update historical data for ${symbol}:`, histError.message);
+        }
+
+        await stock.save();
+        return stock;
+      } else {
+        // Use in-memory storage
+        if (!this.memoryCache) {
+          this.memoryCache = new Map();
+        }
+
+        // Add historical data for in-memory storage
+        try {
+          const historicalData = await this.getHistoricalData(symbol);
+          if (historicalData && historicalData.length > 0) {
+            stockData.historicalData = historicalData;
+          }
+        } catch (histError) {
+          logger.warn(`Could not get historical data for ${symbol}:`, histError.message);
+        }
+
+        this.memoryCache.set(symbol.toUpperCase(), stockData);
+        return stockData;
+      }
     } catch (error) {
       logger.error(`Error updating stock data for ${symbol}:`, error.message);
       throw error;
@@ -164,12 +292,22 @@ class StockService {
   // Get stock from database or fetch and store
   async getStock(symbol) {
     try {
-      let stock = await Stock.findOne({ symbol: symbol.toUpperCase() });
+      let stock = null;
+      
+      if (global.mongoConnected) {
+        stock = await Stock.findOne({ symbol: symbol.toUpperCase() });
+      } else {
+        // Use in-memory cache
+        if (!this.memoryCache) {
+          this.memoryCache = new Map();
+        }
+        stock = this.memoryCache.get(symbol.toUpperCase());
+      }
       
       // If stock doesn't exist or data is old (> 5 minutes), update it
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
       
-      if (!stock || stock.lastUpdated < fiveMinutesAgo) {
+      if (!stock || !stock.lastUpdated || new Date(stock.lastUpdated) < fiveMinutesAgo) {
         stock = await this.updateStockData(symbol);
       }
 
@@ -200,8 +338,14 @@ class StockService {
   // Get trending stocks
   async getTrendingStocks(limit = 10) {
     try {
-      // First try to get from database
-      let stocks = await Stock.findTrending(limit);
+      let stocks = [];
+      
+      if (global.mongoConnected) {
+        // Try to get from database
+        stocks = await Stock.find({ isActive: true })
+          .sort({ changePercent: -1 })
+          .limit(limit);
+      }
       
       // If we don't have enough stocks, fetch popular ones
       if (stocks.length < limit) {
@@ -211,11 +355,11 @@ class StockService {
         // Combine and deduplicate
         const allStocks = [...stocks, ...fetchedStocks];
         const uniqueStocks = allStocks.filter((stock, index, self) => 
-          index === self.findIndex(s => s.symbol === stock.symbol)
+          index === self.findIndex(s => (s.symbol || s.symbol) === (stock.symbol || stock.symbol))
         );
         
         stocks = uniqueStocks
-          .sort((a, b) => b.changePercent - a.changePercent)
+          .sort((a, b) => (b.changePercent || 0) - (a.changePercent || 0))
           .slice(0, limit);
       }
 
@@ -229,7 +373,25 @@ class StockService {
   // Search stocks
   async searchStocks(query, limit = 20) {
     try {
-      const stocks = await Stock.searchStocks(query, limit);
+      let stocks = [];
+      
+      if (global.mongoConnected) {
+        stocks = await Stock.find({
+          $or: [
+            { symbol: { $regex: query, $options: 'i' } },
+            { name: { $regex: query, $options: 'i' } }
+          ]
+        }).limit(limit);
+      } else {
+        // Search in memory cache
+        if (this.memoryCache) {
+          const allStocks = Array.from(this.memoryCache.values());
+          stocks = allStocks.filter(stock => 
+            stock.symbol.toLowerCase().includes(query.toLowerCase()) ||
+            (stock.name && stock.name.toLowerCase().includes(query.toLowerCase()))
+          ).slice(0, limit);
+        }
+      }
       
       // If no results found and query looks like a symbol, try to fetch it
       if (stocks.length === 0 && query.length <= 5) {
@@ -260,8 +422,39 @@ class StockService {
       return response.data;
     } catch (error) {
       logger.error(`Error getting predictions for ${symbol}:`, error.message);
-      throw error;
+      
+      // Return mock predictions as fallback
+      return {
+        symbol: symbol.toUpperCase(),
+        predictions: this.generateMockPredictions(symbol, days),
+        isMockData: true,
+        message: 'Prediction service unavailable - showing mock data'
+      };
     }
+  }
+
+  // Generate mock predictions
+  generateMockPredictions(symbol, days) {
+    const predictions = [];
+    const currentStock = this.memoryCache?.get(symbol.toUpperCase());
+    let basePrice = currentStock?.currentPrice || 100 + Math.random() * 400;
+    
+    for (let i = 1; i <= days; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      
+      // Random walk with slight upward bias
+      const change = (Math.random() - 0.45) * basePrice * 0.02; // Slight upward bias
+      basePrice = Math.max(basePrice + change, 1);
+      
+      predictions.push({
+        date: date.toISOString().split('T')[0],
+        predicted_price: Math.round(basePrice * 100) / 100,
+        confidence: Math.random() * 0.3 + 0.7 // 70-100% confidence
+      });
+    }
+    
+    return predictions;
   }
 }
 
