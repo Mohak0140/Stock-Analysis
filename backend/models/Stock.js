@@ -98,7 +98,7 @@ const stockSchema = new mongoose.Schema({
 });
 
 // Indexes for better query performance
-stockSchema.index({ symbol: 1 });
+// Note: symbol index is automatically created by unique: true
 stockSchema.index({ name: 'text', description: 'text' });
 stockSchema.index({ sector: 1 });
 stockSchema.index({ lastUpdated: -1 });

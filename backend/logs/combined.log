@@ -39,3 +39,28 @@
 {"level":"info","message":"2. Start MongoDB: sudo systemctl start mongod","service":"stock-analysis-backend","timestamp":"2025-07-27T14:54:51.064Z"}
 {"level":"info","message":"3. Or use a cloud MongoDB service like MongoDB Atlas","service":"stock-analysis-backend","timestamp":"2025-07-27T14:54:51.064Z"}
 {"level":"info","message":"GET /api/stocks/GOOGL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T14:55:15.120Z"}
+{"level":"info","message":"SIGTERM received. Shutting down gracefully...","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:05.989Z"}
+{"level":"warn","message":"API keys not properly configured. Some features may not work correctly.","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:06.297Z"}
+{"level":"warn","message":"Please get API keys from:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:06.299Z"}
+{"level":"warn","message":"- Alpha Vantage: https://www.alphavantage.co/support/#api-key","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:06.299Z"}
+{"level":"warn","message":"- Finnhub: https://finnhub.io/register","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:06.299Z"}
+{"level":"info","message":"Server running on port 5000 in development mode","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:06.381Z"}
+{"level":"warn","message":"⚠️  Running without database - some features may be limited","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:06.381Z"}
+{"level":"warn","message":"⚠️  Using demo API keys - please configure real API keys for full functionality","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:06.381Z"}
+{"level":"info","message":"GET /api/health - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:13.500Z"}
+{"level":"info","message":"GET /api/health - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:18.414Z"}
+{"level":"info","message":"GET /api/stocks/AAPL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:23.515Z"}
+{"level":"info","message":"Using mock data for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:23.517Z"}
+{"level":"info","message":"Using mock profile for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:23.517Z"}
+{"level":"info","message":"Using mock historical data for AAPL - demo API key detected","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:23.517Z"}
+{"level":"info","message":"GET /favicon.ico - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:28.711Z"}
+{"level":"warn","message":"MongoDB connection failed:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:36.380Z"}
+{"level":"warn","message":"Running in fallback mode without database persistence","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:36.380Z"}
+{"level":"warn","message":"Data will be stored in memory only","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:36.380Z"}
+{"level":"info","message":"To fix this issue:","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:36.380Z"}
+{"level":"info","message":"1. Install MongoDB: sudo apt-get install mongodb-org","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:36.380Z"}
+{"level":"info","message":"2. Start MongoDB: sudo systemctl start mongod","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:36.381Z"}
+{"level":"info","message":"3. Or use a cloud MongoDB service like MongoDB Atlas","service":"stock-analysis-backend","timestamp":"2025-07-27T15:13:36.381Z"}
+{"level":"info","message":"GET /api/stocks/AAPL - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:14:08.530Z"}
+{"level":"info","message":"GET /favicon.ico - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:14:08.537Z"}
+{"level":"info","message":"GET /api/health - ::1","service":"stock-analysis-backend","timestamp":"2025-07-27T15:14:08.544Z"}
