@@ -224,6 +224,23 @@ class StockService {
     return historicalData;
   }
 
+  // Transform stock data to match frontend expectations
+  transformStockData(stockData) {
+    return {
+      symbol: stockData.symbol,
+      name: stockData.name,
+      current_price: stockData.currentPrice,
+      change: stockData.change,
+      change_percent: stockData.changePercent,
+      volume: stockData.volume || 0,
+      market_cap: stockData.marketCap,
+      pe_ratio: stockData.peRatio,
+      sector: stockData.sector,
+      timestamp: stockData.lastUpdated || stockData.timestamp || new Date().toISOString(),
+      isMockData: stockData.isMockData
+    };
+  }
+
   // Update or create stock in database
   async updateStockData(symbol) {
     try {
@@ -324,7 +341,8 @@ class StockService {
         stock = await this.updateStockData(symbol);
       }
 
-      return stock;
+      // Transform data for frontend compatibility
+      return this.transformStockData(stock);
     } catch (error) {
       logger.error(`Error getting stock ${symbol}:`, error.message);
       throw error;
@@ -355,9 +373,12 @@ class StockService {
       
       if (global.mongoConnected) {
         // Try to get from database
-        stocks = await Stock.find({ isActive: true })
+        const dbStocks = await Stock.find({ isActive: true })
           .sort({ changePercent: -1 })
           .limit(limit);
+        
+        // Transform database stocks to frontend format
+        stocks = dbStocks.map(stock => this.transformStockData(stock));
       }
       
       // If we don't have enough stocks, fetch popular ones
@@ -368,11 +389,11 @@ class StockService {
         // Combine and deduplicate
         const allStocks = [...stocks, ...fetchedStocks];
         const uniqueStocks = allStocks.filter((stock, index, self) => 
-          index === self.findIndex(s => (s.symbol || s.symbol) === (stock.symbol || stock.symbol))
+          index === self.findIndex(s => s.symbol === stock.symbol)
         );
         
         stocks = uniqueStocks
-          .sort((a, b) => (b.changePercent || 0) - (a.changePercent || 0))
+          .sort((a, b) => (b.change_percent || 0) - (a.change_percent || 0))
           .slice(0, limit);
       }
 
@@ -389,20 +410,26 @@ class StockService {
       let stocks = [];
       
       if (global.mongoConnected) {
-        stocks = await Stock.find({
+        const dbStocks = await Stock.find({
           $or: [
             { symbol: { $regex: query, $options: 'i' } },
             { name: { $regex: query, $options: 'i' } }
           ]
         }).limit(limit);
+        
+        // Transform database stocks to frontend format
+        stocks = dbStocks.map(stock => this.transformStockData(stock));
       } else {
         // Search in memory cache
         if (this.memoryCache) {
           const allStocks = Array.from(this.memoryCache.values());
-          stocks = allStocks.filter(stock => 
+          const matchingStocks = allStocks.filter(stock => 
             stock.symbol.toLowerCase().includes(query.toLowerCase()) ||
             (stock.name && stock.name.toLowerCase().includes(query.toLowerCase()))
           ).slice(0, limit);
+          
+          // Transform memory cache stocks to frontend format
+          stocks = matchingStocks.map(stock => this.transformStockData(stock));
         }
       }
       
