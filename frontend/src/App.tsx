@@ -147,11 +147,6 @@ const AppContent: React.FC = () => {
     await logout();
   };
 
-  const handleAuthSuccess = (user: any) => {
-    // Authentication successful, user state will be updated by context
-    console.log('Authentication successful:', user);
-  };
-
   // Show loading spinner while checking authentication
   if (isLoading) {
     return (
@@ -179,7 +174,7 @@ const AppContent: React.FC = () => {
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AuthPage onAuthSuccess={handleAuthSuccess} />
+        <AuthPage />
       </ThemeProvider>
     );
   }

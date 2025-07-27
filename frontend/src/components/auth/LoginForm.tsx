@@ -21,9 +21,9 @@ import {
   LoginTwoTone
 } from '@mui/icons-material';
 import { authAPI } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface LoginFormProps {
-  onSuccess: (user: any) => void;
   onSwitchToRegister: () => void;
 }
 
@@ -32,7 +32,7 @@ interface LoginData {
   password: string;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegister }) => {
+const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToRegister }) => {
   const [formData, setFormData] = useState<LoginData>({
     email: '',
     password: ''
@@ -40,6 +40,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegister }) 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { login } = useAuth();
 
   const handleChange = (field: keyof LoginData) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -61,8 +62,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, onSwitchToRegister }) 
     setError(null);
 
     try {
-      const result = await authAPI.login(formData.email, formData.password);
-      onSuccess(result.user);
+      await login(formData.email, formData.password);
+      // No need to call onSuccess, context will update and App will re-render
     } catch (err: any) {
       const errorMessage = err.response?.data?.error || err.message || 'Login failed';
       setError(errorMessage);

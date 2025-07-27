@@ -11,17 +11,9 @@ import { Analytics } from '@mui/icons-material';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
 
-interface AuthPageProps {
-  onAuthSuccess: (user: any) => void;
-}
-
-const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
+const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const theme = useTheme();
-
-  const handleAuthSuccess = (user: any) => {
-    onAuthSuccess(user);
-  };
 
   const switchToRegister = () => {
     setIsLogin(false);
@@ -79,12 +71,11 @@ const AuthPage: React.FC<AuthPageProps> = ({ onAuthSuccess }) => {
           <Box>
             {isLogin ? (
               <LoginForm
-                onSuccess={handleAuthSuccess}
                 onSwitchToRegister={switchToRegister}
               />
             ) : (
               <RegisterForm
-                onSuccess={handleAuthSuccess}
+                onSuccess={() => {}}
                 onSwitchToLogin={switchToLogin}
               />
             )}
